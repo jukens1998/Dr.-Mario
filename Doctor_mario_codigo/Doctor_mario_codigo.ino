@@ -17,8 +17,8 @@ Adafruit_NeoPixel pixels(NUMPIXELS, PIN, NEO_GRB + NEO_KHZ800);
 //Variable que empieza el juego
 int empiezaJuego;
 
-//colores de los elementos
-int azul[3] = {0, 0, 255};
+//colores de las bacterias
+int colorBacterias[59][2];
 
 // mapa de dr mario
 int numeroPixeles = 59;
@@ -45,57 +45,72 @@ void crearMapa() {
 }
 
 //Titilar bacterias
-void titilarBacterias() {
-  Serial.print("entra");
-  for (int i = 0; i <= 59; i++) {
-    if (myPins[i] == 1) {
-      int aleatorio = random(1, 4);
-      delay(1000);
-      //genera aleatorio enre 1 y 3 donde 1 es rojo 2 es verde y 3 es azul
-      Serial.println(aleatorio);
-      if (aleatorio == 1) {
-        pixels.setPixelColor(i, pixels.Color(255, 0, 0));
-        delay(1000);
-        pixels.show();
-        delay(1000);
-      }
-      else if (aleatorio == 2) {
-        pixels.setPixelColor(i, pixels.Color(0, 255, 0));
-        delay(1000);
-        pixels.show();
-      }
-      else if (aleatorio == 3) {
-        pixels.setPixelColor(i, pixels.Color(0, 0, 255));
-        delay(1000);
-        pixels.show();
-      }
-      else if (aleatorio == 4) {
-        pixels.setPixelColor(i, pixels.Color(0, 0, 0));
-        delay(1000);
-        pixels.show();
-      }
-
-    }
+void titilarBacterias(int i, int color) {
+  if (color == 1) {
+    pixels.setPixelColor(i, pixels.Color(255, 0, 0));
+    delay(25);
+    pixels.show();
+    pixels.setPixelColor(i, pixels.Color(0, 0, 0));
+    delay(25);
+    pixels.show();
+  }
+  if (color == 2) {
+    pixels.setPixelColor(i, pixels.Color(0, 255, 0));
+    delay(25);
+    pixels.show();
+    pixels.setPixelColor(i, pixels.Color(0, 0, 0));
+    delay(25);
+    pixels.show();
+  }
+  if (color == 3) {
+    pixels.setPixelColor(i, pixels.Color(0, 0, 255));
+    delay(25);
+    pixels.show();
+    pixels.setPixelColor(i, pixels.Color(0, 0, 0));
+    delay(25);
+    pixels.show();
+  }
+  if (color == 4) {
+    pixels.setPixelColor(i, pixels.Color(0, 0, 0));
+    delay(100);
+    pixels.show();
   }
 }
 
 // crea bacterias en posiciones aleatorias
 
 void generadorBacteria(int CantidadBacterias) {
+
   for (int i = 0; i <= CantidadBacterias; i++) {
-    int bacteria = random(0,59);
+    int bacteria = random(0, 60);
     myPins[bacteria] = 1;
   }
 
   for (int i = 0; i <= 59; i++) {
     if (myPins[i] == 1) {
-      Serial.println(i);
-      pixels.setPixelColor(i, pixels.Color(0, 0, 255));
+      pixels.setPixelColor(i, pixels.Color(0, 255, 0));
       delay(100);
       pixels.show();
+      int colores = random(1, 4);
+      colorBacterias[i][colores] = colores;
+    }
+
+  }
+}
+
+//Revisa la posicion de las bacterias y titila
+void titilar(){
+   for (int j = 0; j <= 59; j++) {
+    for (int h = 1; h <= 3; h++) {
+      if (myPins[j] == 1) {
+        if (h > 0) {
+          titilarBacterias(j, colorBacterias[j][h]);
+        }
+      }
     }
   }
 }
+
 void loop() {
   if (empiezaJuego < 2) {
     empiezaJuego = empiezaJuego + 1;
@@ -103,9 +118,9 @@ void loop() {
   if (empiezaJuego == 1) {
     Serial.println("GOOOOO");
     crearMapa();
-    generadorBacteria(4);
+    generadorBacteria(10);
   }
-
-  titilarBacterias();
+ 
+titilar();
 
 }

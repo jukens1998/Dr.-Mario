@@ -5,6 +5,7 @@ import processing.awt.PSurfaceAWT;
 import g4p_controls.*;
 import gifAnimation.*;
 import processing.awt.PSurfaceAWT;
+import processing.serial.*;
 
 //Objetos que hacen la funcion de reproducir musica.
 Minim minin;
@@ -14,10 +15,14 @@ AudioSample playerMM;
 //Objeto que genera un Slider para definir la dificultad del juego.
 GCustomSlider sdr;
 
-Gif loopingGif;
+Gif DrMario;
+Gif Virus;
 
 //Puerto Serial para la conexion con arduino.
-//Serial port;
+Serial mySerial;
+
+String myString=null;
+String val;
 
 //Objeto para poner una imagen en la interfaz
 PImage mario;
@@ -32,7 +37,7 @@ float vy = 0;
 float dt = 1.0/30.0;
 float gravity = 3000;
 float restitution = .7;
-int puntaje;
+String puntaje;
 
 //Objeto que funciona para crear la interfaz inicial.
 Intro intro;
@@ -53,8 +58,9 @@ void setup() {
   playerMM = minin.loadSample("2 - Select.mp3");
   font1 = createFont("ARCADECLASSIC.TTF", 80);
   mario=loadImage("mainpng.jpg");
-  //port = new Serial(this, Serial.list()[1], 9600);
-
+  
+  String myPort=Serial.list()[1];
+  mySerial=new Serial(this, myPort,9600);
 
 
   intro=new Intro();
@@ -64,16 +70,14 @@ void setup() {
   menu=new Menu();
   runSketch(new String[]{"Menu"}, menu);
   menu.getSurface().setVisible(false);
-  sdr = new GCustomSlider(menu, 700, 350, 500, 100, "green_red20px");
-  sdr.setShowDecor(false, true, true, true);
-  sdr.setNbrTicks(10);
-  sdr.setLimits(5, 1, 10);
-  sdr.setShowValue(true);
+ 
 
 
 
-  loopingGif = new Gif(this, "DrMario.gif");
-  loopingGif.loop();
+  DrMario = new Gif(this, "DrMario.gif");
+  DrMario.loop();
+  Virus = new Gif(this, "Virus.gif");
+  Virus.loop();
   ani = new animation();
   runSketch(new String[]{"Gameplay"}, ani);
   ani.getSurface().setVisible(false);
@@ -81,13 +85,13 @@ void setup() {
 
 //metodo que dibuja y actualiza lo ocurrido en pantalla.
 void draw() {
-  n=sdr.getValueI();
+  
 
   if (((PSurfaceAWT.SmoothCanvas) intro.getSurface().getNative()).getFrame().isVisible()==true) {
     intro.startG();
   } else if (((PSurfaceAWT.SmoothCanvas) menu.getSurface().getNative()).getFrame().isVisible()==true) {
     menu.startGa();
   } else if (((PSurfaceAWT.SmoothCanvas) ani.getSurface().getNative()).getFrame().isVisible()==true) {
-    
+    ani.puntaje();
   }
 }

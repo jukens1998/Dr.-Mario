@@ -1,3 +1,5 @@
+#include <Adafruit_Circuit_Playground.h>
+
 // NeoPixel Ring simple sketch (c) 2013 Shae Erisson
 // Released under the GPLv3 license to match the rest of the
 // Adafruit NeoPixel library
@@ -83,7 +85,7 @@ void titilarBacterias() {
 
 void generadorBacteria(int CantidadBacterias) {
   for (int i = 0; i <= CantidadBacterias; i++) {
-    int bacteria = random(0,59);
+    int bacteria = random(0, 59);
     myPins[bacteria] = 1;
   }
 
@@ -96,6 +98,64 @@ void generadorBacteria(int CantidadBacterias) {
     }
   }
 }
+
+
+//Verifica Si hay pildoras y virus del mismo color continuas.
+void verificar()
+{
+  //Verifica horizontalmente
+
+  for (int j = 0; j < 23; j++) {
+    int a = myPins[j];
+    int colorA = pixels.getPixelColor(j);
+    int b = myPins[j + 12];
+    int colorB = pixels.getPixelColor(j + 12);
+    int c = myPins[j + 24];
+    int colorC = pixels.getPixelColor(j + 24);
+    int d = myPins[j + 36];
+    int colorD = pixels.getPixelColor(j + 36);
+    //En esta parte se comparan los colores
+    if (colorA == colorB && colorA == colorC && colorA == colorD) {
+      myPins[j] = 0;
+      pixels.setPixelColor(j, pixels.Color(0, 0, 0));
+      myPins[j + 12] = 0;
+      pixels.setPixelColor(j + 12, pixels.Color(0, 0, 0));
+      myPins[j + 24] = 0;
+      pixels.setPixelColor(j + 24, pixels.Color(0, 0, 0));
+      myPins[j + 36] = 0;
+      pixels.setPixelColor(j + 36, pixels.Color(0, 0, 0));
+    }
+  }
+
+  //Verificar verticalmente
+
+  for (int j = 0; j < 57; j++) {
+
+    int a = myPins[j];
+    int colorA = pixels.getPixelColor(j);
+    int b = myPins[j + 1];
+    int colorB = pixels.getPixelColor(j + 1);
+    int c = myPins[j + 2];
+    int colorC = pixels.getPixelColor(j + 2);
+    int d = myPins[j + 3];
+    int colorD = pixels.getPixelColor(j + 3);
+
+    //En esta parte se comparan los colores
+    if (colorA == colorB && colorA == colorC && colorA == colorD) {
+      myPins[j] = 0;
+      pixels.setPixelColor(j, pixels.Color(0, 0, 0));
+      myPins[j + 1] = 0;
+      pixels.setPixelColor(j + 1, pixels.Color(0, 0, 0));
+      myPins[j + 2] = 0;
+      pixels.setPixelColor(j + 2, pixels.Color(0, 0, 0));
+      myPins[j + 3] = 0;
+      pixels.setPixelColor(j + 3, pixels.Color(0, 0, 0));
+    }
+
+  }
+
+}
+
 void loop() {
   if (empiezaJuego < 2) {
     empiezaJuego = empiezaJuego + 1;

@@ -30,7 +30,7 @@ class Menu extends PApplet { //<>// //<>//
     fondo();
     contenido();
     numeroDeV();
-    men();
+    menu();
   }
 
   //Metodo para generar el fondo de la ventana.
@@ -153,11 +153,11 @@ class Menu extends PApplet { //<>// //<>//
 
     if (myString!=null) {
       val = myString;
-      if (val.equals("Left") )
+      if (val.equals("Left") && n>0 )
       {
         n--;
       }
-      if (val.equals("Right") )
+      if (val.equals("Right") && n<11 )
       {
         n++;
       }
@@ -176,7 +176,7 @@ class Menu extends PApplet { //<>// //<>//
     rect(890, 385, 100, 105);
   }
 
-  void men()
+  void menu()
   {
     while (mySerial.available()>0) {
       myString = mySerial.readString();
@@ -194,6 +194,7 @@ class Menu extends PApplet { //<>// //<>//
       }
       if (selectMus) {
         selectMusic();
+        mySerial.write(n);
       }
     }
   }
@@ -259,7 +260,8 @@ class Menu extends PApplet { //<>// //<>//
           selectMus=false;
           selectlevel=true;
           getSurface().setVisible(false);
-          mySerial.write(n);
+          empieza=1;
+          mySerial.write(empieza);
         }
       }
     }

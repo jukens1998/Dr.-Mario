@@ -19,6 +19,9 @@ Adafruit_NeoPixel pixels(NUMPIXELS, PIN, NEO_GRB + NEO_KHZ800);
 //Variable que empieza el juego
 int empiezaJuego;
 
+//Variable que representa el numero de virus en el mapa.
+int nVirus;
+
 //colores de los elementos
 int azul[3] = {0, 0, 255};
 
@@ -26,9 +29,19 @@ int azul[3] = {0, 0, 255};
 int numeroPixeles = 59;
 bool crear = true;
 int myPins[60];
+
+//Variables para la conexion con processing
+boolean estado;
+int p1, p2, p3;
+
 void setup() {
   Serial.begin(9600);
 
+  pinMode(13, INPUT);
+  pinMode(12, INPUT);
+  pinMode(11, INPUT);
+  estado = false;
+  
 #if defined(AVR_ATtiny85) && (F_CPU == 16000000)
   clock_prescale_set(clock_div_1);
 #endif
@@ -157,13 +170,46 @@ void verificar()
 }
 
 void loop() {
-  if (empiezaJuego < 2) {
-    empiezaJuego = empiezaJuego + 1;
+  p1 = digitalRead(13);
+  p2 = digitalRead(12);
+  p3 = digitalRead(11);
+  
+
+//Controles para el menu
+  if (p1 == HIGH && !estado) {
+    Serial.print("Enter");
+    estado = true;
+    p2 = 10;
+    p3 = 10;
   }
+  if (p2 == HIGH && !estado) {
+    Serial.print("Left");
+    estado = true;
+    p1 = 10;
+    p3 = 10;
+  }
+  if (p3 == HIGH && !estado) {
+    Serial.print("Right");
+    estado = true;
+    p2 = 10;
+    p1 = 10;
+  }
+  else if (p1 + p2 + p3 == 0) {
+    estado = false;
+  }
+
+
+
+//Juego en el tablero  
+empiezaJuego=Serial.read();
+  /*if (empiezaJuego < 2) {
+    empiezaJuego = empiezaJuego + 1;
+  }*/
   if (empiezaJuego == 1) {
     Serial.println("GOOOOO");
     crearMapa();
-    generadorBacteria(4);
+    nVirus=Serial.read();
+    generadorBacteria(nVirus);
   }
 
   titilarBacterias();

@@ -30,13 +30,20 @@ PImage mario;
 //fuente usada en la interfaz
 PFont font1;
 
-//variables numericas.
+//Señal de inicio del juego
+int empieza;
+
+//numero de viruses.
 int n;
+
+//Variables para la animacion.
 float y = 40;
 float vy = 0;
 float dt = 1.0/30.0;
 float gravity = 3000;
 float restitution = .7;
+
+//puntaje del jugador.
 String puntaje;
 
 //Objeto que funciona para crear la interfaz inicial.

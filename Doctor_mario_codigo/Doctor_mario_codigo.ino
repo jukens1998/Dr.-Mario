@@ -14,16 +14,30 @@
 Adafruit_NeoPixel pixels(NUMPIXELS, PIN, NEO_GRB + NEO_KHZ800);
 
 #define DELAYVAL 500
+
+//Contador de giro
+int contadorGiro;
+
+///
+int prueba;
+
 //Variable que empieza el juego
 int empiezaJuego;
 
 //colores de las bacterias
 int colorBacterias[59][2];
 
+// color de las pildoras
+double colorPildoras[59][2];
+
 // mapa de dr mario
 int numeroPixeles = 59;
 bool crear = true;
 int myPins[60];
+
+//pastillas
+int pastilla1;
+int pastilla2;
 void setup() {
   Serial.begin(9600);
 
@@ -32,6 +46,140 @@ void setup() {
 #endif
   pixels.begin();
 }
+
+
+//graficar elementos en la matriz;
+void graficar(int a, int b) {
+
+  pixels.setPixelColor(a, pixels.Color(0, 255, 0));
+  pixels.setPixelColor(b, pixels.Color(0, 255, 0));
+  delay(200);
+  pixels.show();
+}
+
+
+
+// funcion pastillas
+void pastas(bool movimientoPastilla) {
+  pastilla1 = 12;
+  pastilla2 = 24;
+  while (movimientoPastilla) {
+
+    for (int i = 0; i < 12; i++) {
+
+
+      /// Funcion de movimiento izquierda derecha
+      int izquierdaControl = digitalRead(5);
+      int derechaControl = digitalRead(4);
+
+
+      if (myPins[pastilla1 + 1] == 1 || myPins[pastilla2 + 1] == 1 ) {
+        myPins[pastilla1] = 1;
+        if (contadorGiro > 1) {
+          myPins[pastilla2+1] = 1;
+        }else{
+          myPins[pastilla2] = 1;
+        }
+
+        movimientoPastilla = false;
+        i = 12;
+        contadorGiro = 0;
+      }
+      if (derechaControl == 1) {
+        if (pastilla2 <= 59) {
+          pixels.setPixelColor(pastilla1, pixels.Color(0, 0, 0));
+          pastilla1 = pastilla1 + 12;
+          pastilla2 = pastilla2 + 12;
+        }
+      }
+      if (izquierdaControl == 1) {
+        if (pastilla1 >= 12) {
+          pixels.setPixelColor(pastilla2, pixels.Color(0, 0, 0));
+          pastilla1 = pastilla1 - 12;
+          pastilla2 = pastilla2 - 12;
+        }
+      }
+      /// Funcion de movimiento izquierda derecha
+
+      /// funcion de girar
+      int giroControl = digitalRead(10);
+      Serial.println(giroControl);
+      delay(200);
+      if (giroControl == 1) {
+        contadorGiro = contadorGiro + 1;
+        delay(200);
+        if (contadorGiro >= 3) {
+          contadorGiro = 0;
+        }
+        switch (contadorGiro) {
+          case 1:
+            pastilla2 = pastilla2 - 13;
+
+            Serial.println("esta en el 1");
+            Serial.println(contadorGiro);
+            break;
+          case 2:
+            pastilla2 = pastilla2 + 13;
+            Serial.println("esta en el 2");
+            break;
+
+          default:
+            // if nothing else matches, do the default
+            // default is optional
+            break;
+        }
+      }
+
+
+      /// funcion de girar
+
+      pixels.setPixelColor(pastilla1, pixels.Color(0, 255, 0));
+      pixels.setPixelColor(pastilla2, pixels.Color(0, 255, 0));
+      delay(200);
+      pixels.show();
+      pixels.setPixelColor(pastilla1, pixels.Color(0, 0, 0));
+      pixels.setPixelColor(pastilla2, pixels.Color(0, 0, 0));
+
+      pastilla1++;
+      pastilla2++;
+
+      pixels.setPixelColor(pastilla1, pixels.Color(0, 255, 0));
+      pixels.setPixelColor(pastilla2, pixels.Color(0, 255, 0));
+      delay(200);
+      pixels.show();
+      pixels.setPixelColor(pastilla1, pixels.Color(0, 0, 0));
+      pixels.setPixelColor(pastilla2, pixels.Color(0, 0, 0));
+
+
+    }
+    graficar(pastilla1, pastilla2);
+
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -99,8 +247,8 @@ void generadorBacteria(int CantidadBacterias) {
 }
 
 //Revisa la posicion de las bacterias y titila
-void titilar(){
-   for (int j = 0; j <= 59; j++) {
+void titilar() {
+  for (int j = 0; j <= 59; j++) {
     for (int h = 1; h <= 3; h++) {
       if (myPins[j] == 1) {
         if (h > 0) {
@@ -118,9 +266,11 @@ void loop() {
   if (empiezaJuego == 1) {
     Serial.println("GOOOOO");
     crearMapa();
-    generadorBacteria(10);
+    generadorBacteria(4);
   }
- 
-titilar();
+
+  titilar();
+
+    pastas(true);
 
 }
